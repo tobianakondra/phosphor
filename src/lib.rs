@@ -5,6 +5,7 @@
 //! is wired in, without coupling the drawing code to a window manager.
 
 pub mod scene;
+pub mod text;
 
 #[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
 pub struct Color {
@@ -60,6 +61,47 @@ impl Surface {
     }
     pub fn pixels(&self) -> &[Color] {
         &self.pixels
+    }
+
+    /// Blend one pixel into the surface. Pixels outside the surface are ignored.
+    pub fn blend_pixel(&mut self, x: i32, y: i32, color: Color) {
+        if x < 0 || y < 0 || x as usize >= self.width || y as usize >= self.height {
+            return;
+        }
+        let index = y as usize * self.width + x as usize;
+        self.pixels[index] = blend(self.pixels[index], color);
+    }
+
+    /// Draw an integer line with a small square brush.
+    pub fn draw_line(&mut self, start: (i32, i32), end: (i32, i32), thickness: u32, color: Color) {
+        let (mut x0, mut y0) = start;
+        let (x1, y1) = end;
+        let dx = (x1 - x0).abs();
+        let sx = if x0 < x1 { 1 } else { -1 };
+        let dy = -(y1 - y0).abs();
+        let sy = if y0 < y1 { 1 } else { -1 };
+        let mut error = dx + dy;
+        let radius = (thickness.max(1) as i32 - 1) / 2;
+
+        loop {
+            for oy in -radius..=radius {
+                for ox in -radius..=radius {
+                    self.blend_pixel(x0 + ox, y0 + oy, color);
+                }
+            }
+            if x0 == x1 && y0 == y1 {
+                break;
+            }
+            let twice_error = 2 * error;
+            if twice_error >= dy {
+                error += dy;
+                x0 += sx;
+            }
+            if twice_error <= dx {
+                error += dx;
+                y0 += sy;
+            }
+        }
     }
 
     pub fn clear(&mut self, color: Color) {

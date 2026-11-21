@@ -8,10 +8,10 @@ Redox's existing hardware drivers. Orbital is not a runtime dependency.
 
 ## Current state
 
-The first piece is a Rust software-rendering core: an owned RGBA surface,
-vertical gradients, clipped shapes, alpha blending, and a static desktop mockup
-following the selected design. Text and final icons are still placeholders. It
-is not yet connected to a screen or input device.
+The Rust software-rendering core now supports TrueType text and draws labels,
+file names, assistant messages, and distinct launcher pictograms in the static
+desktop mockup. Window interaction and Redox screen/input access remain to be
+implemented.
 
 ## Roadmap
 
@@ -33,6 +33,10 @@ Generate a host-side preview image with:
 ```sh
 cargo run --example preview -- /tmp/phosphor-preview.ppm
 ```
+
+DejaVu Sans is loaded from the host's standard font paths. To select it
+explicitly, pass its path after the output path. On Redox, the Redox `dejavu`
+package installs it under `/usr/share/fonts/Sans/DejaVu/DejaVuSans.ttf`.
 
 This preview exercises the backend-independent renderer only. Displaying
 Phosphor inside Redox still requires the Redox display/input backend and a

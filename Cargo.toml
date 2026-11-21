@@ -3,5 +3,9 @@ name = "phosphor"
 version = "0.1.0"
 edition = "2024"
 description = "A custom graphical environment for Redox OS"
+
+[dependencies]
+fontdue = { version = "0.9.5", default-features = false, features = ["std"] }
+
 [lib]
 path = "src/lib.rs"
