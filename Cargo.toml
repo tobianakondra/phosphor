@@ -1,0 +1,7 @@
+[package]
+name = "phosphor"
+version = "0.1.0"
+edition = "2024"
+description = "A custom graphical environment for Redox OS"
+[lib]
+path = "src/lib.rs"
