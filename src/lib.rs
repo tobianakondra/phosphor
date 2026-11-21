@@ -11,7 +11,10 @@ extern crate alloc;
 use alloc::{vec, vec::Vec};
 
 pub mod scene;
+pub mod target;
 pub mod text;
+
+pub use target::RenderTarget;
 
 #[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
 pub struct Color {

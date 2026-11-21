@@ -1,12 +1,12 @@
 //! Static Phosphor desktop composition based on the selected visual identity.
 
-use crate::{Color, Surface, text::Typeface};
+use crate::{Color, RenderTarget, text::Typeface};
 
 /// Paint the desktop, file manager, assistant panel, open launcher, and bottom bar.
 ///
 /// This is a visual mockup. Window interaction and the Redox display/input
 /// backend have not been implemented yet.
-pub fn render_desktop(surface: &mut Surface, typeface: &Typeface) {
+pub fn render_desktop<T: RenderTarget>(surface: &mut T, typeface: &Typeface) {
     let width = surface.width() as f32;
     let height = surface.height() as f32;
     if width < 1.0 || height < 1.0 {
@@ -17,19 +17,27 @@ pub fn render_desktop(surface: &mut Surface, typeface: &Typeface) {
     let y = |value: f32| (value * height) as i32;
     let w = |value: f32| (value * width).max(1.0) as u32;
     let h = |value: f32| (value * height).max(1.0) as u32;
-    let round =
-        |surface: &mut Surface, bx: f32, by: f32, bw: f32, bh: f32, radius: f32, color: Color| {
-            surface.fill_round_rect(x(bx), y(by), w(bw), h(bh), h(radius).min(w(radius)), color);
+    let round = |surface: &mut dyn RenderTarget,
+                 bx: f32,
+                 by: f32,
+                 bw: f32,
+                 bh: f32,
+                 radius: f32,
+                 color: Color| {
+        surface.fill_round_rect(x(bx), y(by), w(bw), h(bh), h(radius).min(w(radius)), color);
+    };
+    let rect =
+        |surface: &mut dyn RenderTarget, bx: f32, by: f32, bw: f32, bh: f32, color: Color| {
+            surface.fill_rect(x(bx), y(by), w(bw), h(bh), color);
         };
-    let rect = |surface: &mut Surface, bx: f32, by: f32, bw: f32, bh: f32, color: Color| {
-        surface.fill_rect(x(bx), y(by), w(bw), h(bh), color);
-    };
-    let ellipse = |surface: &mut Surface, bx: f32, by: f32, bw: f32, bh: f32, color: Color| {
-        surface.fill_ellipse(x(bx), y(by), w(bw), h(bh), color);
-    };
-    let label = |surface: &mut Surface, bx: f32, by: f32, size: f32, value: &str, color: Color| {
-        typeface.draw(surface, x(bx), y(by), height * size, value, color);
-    };
+    let ellipse =
+        |surface: &mut dyn RenderTarget, bx: f32, by: f32, bw: f32, bh: f32, color: Color| {
+            surface.fill_ellipse(x(bx), y(by), w(bw), h(bh), color);
+        };
+    let label =
+        |surface: &mut dyn RenderTarget, bx: f32, by: f32, size: f32, value: &str, color: Color| {
+            typeface.draw(surface, x(bx), y(by), height * size, value, color);
+        };
 
     // Deep teal wallpaper with soft green light in the lower-right corner.
     surface.vertical_gradient(Color::rgb(8, 46, 49), Color::rgb(17, 91, 77));
@@ -613,7 +621,7 @@ pub fn render_desktop(surface: &mut Surface, typeface: &Typeface) {
 }
 
 fn draw_app_icon(
-    surface: &mut Surface,
+    surface: &mut dyn RenderTarget,
     x: i32,
     y: i32,
     width: u32,
@@ -631,7 +639,7 @@ fn draw_app_icon(
     let center_y = y + h / 2;
     let white = Color::rgb(255, 255, 255);
     let stroke = (w / 13).max(1) as u32;
-    let line = |surface: &mut Surface, a, b| surface.draw_line(a, b, stroke, white);
+    let line = |surface: &mut dyn RenderTarget, a, b| surface.draw_line(a, b, stroke, white);
 
     match index {
         0 => {

@@ -1,6 +1,6 @@
 //! TrueType text rasterization used by desktop labels and controls.
 
-use crate::{Color, Surface};
+use crate::{Color, RenderTarget};
 
 /// A loaded TrueType font face.
 pub struct Typeface {
@@ -14,7 +14,15 @@ impl Typeface {
     }
 
     /// Draw text with its top edge at `(x, y)`. The renderer clips at the surface.
-    pub fn draw(&self, surface: &mut Surface, x: i32, y: i32, size: f32, text: &str, color: Color) {
+    pub fn draw<T: RenderTarget + ?Sized>(
+        &self,
+        surface: &mut T,
+        x: i32,
+        y: i32,
+        size: f32,
+        text: &str,
+        color: Color,
+    ) {
         let size = size.max(1.0);
         let ascent = self
             .font

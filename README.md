@@ -14,6 +14,20 @@ desktop mockup. Window interaction and Redox screen/input access remain to be
 implemented. The library requires an allocator supplied by its host; the preview
 example uses the standard library and supplies that environment on the desktop.
 
+## Rendering backends
+
+`scene::render_desktop` and `text::Typeface::draw` accept any implementation of
+`RenderTarget`. A backend provides the target dimensions, alpha-blended pixels,
+rectangles, and rounded rectangles; the trait supplies clipped helpers for
+gradients, ellipses, and lines. `Surface` is the owned RGBA implementation used
+by the host preview.
+
+PrismOS can implement `RenderTarget` for a small local wrapper around
+`prism_core::gfx::Surface`. That wrapper can map Phosphor's RGBA colors to
+Prism's RGB pixel operations and alpha blending without making Phosphor depend
+on PrismOS. The adapter belongs in the integrating kernel because Rust's
+orphan rules prevent implementing Phosphor's trait directly for Prism's type.
+
 ## Roadmap
 
 1. Identify and implement a supported Redox display and input path that does
