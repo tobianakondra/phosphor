@@ -27,6 +27,10 @@ PrismOS can implement `RenderTarget` for a small local wrapper around
 Prism's RGB pixel operations and alpha blending without making Phosphor depend
 on PrismOS. The adapter belongs in the integrating kernel because Rust's
 orphan rules prevent implementing Phosphor's trait directly for Prism's type.
+For the crate structure and render flow, see
+[`docs/architecture.md`](docs/architecture.md). For the current PrismOS
+adapter, its activation command, and its limits, see
+[`docs/prism-os-integration.md`](docs/prism-os-integration.md).
 
 ## Roadmap
 
