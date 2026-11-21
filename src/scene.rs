@@ -263,30 +263,30 @@ pub fn render_desktop(surface: &mut Surface, typeface: &Typeface) {
         0.755,
         0.094,
         0.232,
-        0.65,
+        0.48,
         0.012,
         Color::rgba(0, 0, 0, 46),
     );
-    round(surface, 0.752, 0.09, 0.232, 0.65, 0.012, window);
-    round(surface, 0.752, 0.09, 0.232, 0.061, 0.012, panel_header);
-    rect(surface, 0.752, 0.139, 0.232, 0.012, panel_header);
+    round(surface, 0.752, 0.09, 0.232, 0.48, 0.012, window);
+    round(surface, 0.752, 0.09, 0.232, 0.053, 0.012, panel_header);
+    rect(surface, 0.752, 0.133, 0.232, 0.01, panel_header);
     ellipse(surface, 0.77, 0.111, 0.009, 0.016, teal);
     label(surface, 0.787, 0.098, 0.021, "Assistant", ink);
     ellipse(surface, 0.968, 0.111, 0.009, 0.016, ink);
-    round(surface, 0.766, 0.17, 0.176, 0.036, 0.018, icon_bg);
+    round(surface, 0.766, 0.164, 0.176, 0.032, 0.016, icon_bg);
     label(
         surface,
         0.78,
-        0.178,
+        0.169,
         0.015,
         "Traitement local, rien n'est envoyé",
         teal,
     );
-    round(surface, 0.796, 0.226, 0.17, 0.073, 0.012, teal);
+    round(surface, 0.796, 0.208, 0.17, 0.047, 0.012, teal);
     label(
         surface,
         0.805,
-        0.237,
+        0.215,
         0.017,
         "Résume le fichier Notes-de-cours.",
         Color::rgb(255, 255, 255),
@@ -294,16 +294,16 @@ pub fn render_desktop(surface: &mut Surface, typeface: &Typeface) {
     round(
         surface,
         0.766,
-        0.319,
+        0.266,
         0.2,
-        0.14,
+        0.092,
         0.012,
         Color::rgb(240, 238, 233),
     );
     label(
         surface,
         0.78,
-        0.332,
+        0.278,
         0.018,
         "Trois chapitres, deux exercices à rendre",
         ink,
@@ -311,7 +311,7 @@ pub fn render_desktop(surface: &mut Surface, typeface: &Typeface) {
     label(
         surface,
         0.78,
-        0.358,
+        0.304,
         0.018,
         "jeudi et un point à revoir sur les index.",
         ink,
@@ -319,7 +319,7 @@ pub fn render_desktop(surface: &mut Surface, typeface: &Typeface) {
     label(
         surface,
         0.78,
-        0.384,
+        0.33,
         0.018,
         "Je peux préparer une fiche de révision.",
         ink,
@@ -328,7 +328,7 @@ pub fn render_desktop(surface: &mut Surface, typeface: &Typeface) {
         round(
             surface,
             bx,
-            0.474,
+            0.372,
             bw,
             0.04,
             0.02,
@@ -337,7 +337,7 @@ pub fn render_desktop(surface: &mut Surface, typeface: &Typeface) {
         label(
             surface,
             bx + 0.012,
-            0.48,
+            0.379,
             0.016,
             if bx < 0.8 {
                 "Ouvrir le fichier"
@@ -350,7 +350,7 @@ pub fn render_desktop(surface: &mut Surface, typeface: &Typeface) {
     rect(
         surface,
         0.752,
-        0.694,
+        0.49,
         0.232,
         0.0015,
         Color::rgb(226, 225, 220),
@@ -358,7 +358,7 @@ pub fn render_desktop(surface: &mut Surface, typeface: &Typeface) {
     round(
         surface,
         0.765,
-        0.707,
+        0.505,
         0.207,
         0.048,
         0.009,
@@ -367,12 +367,12 @@ pub fn render_desktop(surface: &mut Surface, typeface: &Typeface) {
     label(
         surface,
         0.776,
-        0.716,
+        0.513,
         0.016,
         "Demander à l'assistant",
         muted,
     );
-    round(surface, 0.947, 0.715, 0.018, 0.034, 0.006, teal);
+    round(surface, 0.947, 0.512, 0.018, 0.034, 0.006, teal);
 
     // Large launcher overlay with search, pinned apps, recents, account and power.
     round(
@@ -489,14 +489,14 @@ pub fn render_desktop(surface: &mut Surface, typeface: &Typeface) {
     rect(
         surface,
         0.025,
-        0.873,
+        0.86,
         0.354,
         0.0015,
         Color::rgb(226, 225, 220),
     );
-    ellipse(surface, 0.029, 0.887, 0.023, 0.034, teal);
-    label(surface, 0.061, 0.89, 0.02, "Mon compte", ink);
-    ellipse(surface, 0.353, 0.89, 0.018, 0.027, ink);
+    ellipse(surface, 0.029, 0.873, 0.023, 0.034, teal);
+    label(surface, 0.061, 0.876, 0.02, "Mon compte", ink);
+    ellipse(surface, 0.353, 0.875, 0.018, 0.027, ink);
 
     // Persistent bottom panel: launcher, search, pinned apps, system tray and clock.
     rect(surface, 0.0, 0.935, 1.0, 0.065, Color::rgb(9, 36, 34));
