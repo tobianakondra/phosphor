@@ -89,15 +89,6 @@ pub fn render_desktop(surface: &mut Surface, typeface: &Typeface) {
             0.003,
             Color::rgb(235, 250, 246),
         );
-        round(
-            surface,
-            0.019,
-            yy + 0.066,
-            0.05,
-            0.006,
-            0.003,
-            Color::rgba(255, 255, 255, 220),
-        );
         label(
             surface,
             0.019,
@@ -130,23 +121,20 @@ pub fn render_desktop(surface: &mut Surface, typeface: &Typeface) {
     round(
         surface,
         0.315,
-        0.061,
+        0.069,
         0.333,
-        0.058,
+        0.037,
         0.009,
         Color::rgb(255, 255, 253),
     );
-    round(surface, 0.328, 0.089, 0.07, 0.004, 0.002, muted);
-    round(surface, 0.403, 0.089, 0.055, 0.004, 0.002, muted);
-    round(surface, 0.463, 0.089, 0.041, 0.004, 0.002, ink);
     for bx in [0.665, 0.693, 0.72] {
         round(surface, bx, 0.079, 0.008, 0.004, 0.002, ink);
     }
     label(
         surface,
         0.322,
-        0.068,
-        0.021,
+        0.071,
+        0.017,
         "Accueil  ›  Documents  ›  Projets",
         muted,
     );
