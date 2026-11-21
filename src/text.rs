@@ -19,8 +19,8 @@ impl Typeface {
         let ascent = self
             .font
             .horizontal_line_metrics(size)
-            .map(|metrics| metrics.ascent.ceil() as i32)
-            .unwrap_or(size.ceil() as i32);
+            .map(|metrics| ceil_to_i32(metrics.ascent))
+            .unwrap_or_else(|| ceil_to_i32(size));
         let baseline = y.saturating_add(ascent);
         let mut pen_x = x;
 
@@ -45,7 +45,24 @@ impl Typeface {
                     );
                 }
             }
-            pen_x = pen_x.saturating_add(metrics.advance_width.round() as i32);
+            pen_x = pen_x.saturating_add(round_to_i32(metrics.advance_width));
         }
+    }
+}
+
+fn ceil_to_i32(value: f32) -> i32 {
+    let truncated = value as i32;
+    if (truncated as f32) < value {
+        truncated.saturating_add(1)
+    } else {
+        truncated
+    }
+}
+
+fn round_to_i32(value: f32) -> i32 {
+    if value >= 0.0 {
+        (value + 0.5) as i32
+    } else {
+        (value - 0.5) as i32
     }
 }

@@ -1,6 +1,6 @@
 # Phosphor
 
-Phosphor is a planned custom graphical environment for Redox OS. Its visual
+Phosphor's rendering core is a `no_std` Rust library using `alloc`. Its visual
 identity is the dark teal desktop design in `Bureau et lanceur@2x.png`: a file
 manager with a contextual assistant panel, a large app launcher, and a persistent
 bottom bar. Phosphor will provide its own rendering and window management using
@@ -11,7 +11,8 @@ Redox's existing hardware drivers. Orbital is not a runtime dependency.
 The Rust software-rendering core now supports TrueType text and draws labels,
 file names, assistant messages, and distinct launcher pictograms in the static
 desktop mockup. Window interaction and Redox screen/input access remain to be
-implemented.
+implemented. The library requires an allocator supplied by its host; the preview
+example uses the standard library and supplies that environment on the desktop.
 
 ## Roadmap
 

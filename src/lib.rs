@@ -4,6 +4,12 @@
 //! A Redox display backend can present this surface once its driver interface
 //! is wired in, without coupling the drawing code to a window manager.
 
+#![no_std]
+
+extern crate alloc;
+
+use alloc::{vec, vec::Vec};
+
 pub mod scene;
 pub mod text;
 
@@ -246,9 +252,8 @@ impl Surface {
 }
 
 fn lerp(a: u8, b: u8, t: f32) -> u8 {
-    (a as f32 + (b as f32 - a as f32) * t)
-        .round()
-        .clamp(0.0, 255.0) as u8
+    let value = a as f32 + (b as f32 - a as f32) * t;
+    (value + 0.5).clamp(0.0, 255.0) as u8
 }
 
 fn blend(dst: Color, src: Color) -> Color {
