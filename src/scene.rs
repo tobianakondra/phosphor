@@ -125,8 +125,12 @@ pub fn render_desktop<T: RenderTarget>(surface: &mut T, typeface: &Typeface) {
     //    Structure: drop-shadow → window body → title bar → sidebar → list
     // ════════════════════════════════════════════════════════════════════════
 
-    // Drop shadow (offset 2 px down/right, dark translucent)
-    round(surface, 0.252, 0.054, 0.492, 0.731, 0.012, Color::rgba(0, 0, 0, 48));
+    // Drop shadow douce — 4 couches concentriques avec alpha décroissant
+    // simule un flou gaussien sans vrai blur
+    round(surface, 0.254, 0.057, 0.492, 0.731, 0.013, Color::rgba(0, 0, 0, 28));
+    round(surface, 0.253, 0.056, 0.492, 0.731, 0.013, Color::rgba(0, 0, 0, 20));
+    round(surface, 0.252, 0.055, 0.492, 0.731, 0.012, Color::rgba(0, 0, 0, 14));
+    round(surface, 0.251, 0.054, 0.492, 0.731, 0.012, Color::rgba(0, 0, 0, 8));
     // Window body
     round(surface, 0.250, 0.050, 0.492, 0.731, 0.012, window);
 
@@ -257,6 +261,30 @@ pub fn render_desktop<T: RenderTarget>(surface: &mut T, typeface: &Typeface) {
         label(surface, 0.427, ry - 0.003, 0.017, name,  ink);
         label(surface, 0.558, ry - 0.003, 0.015, date,  muted);
         label(surface, 0.661, ry - 0.003, 0.015, size,  muted);
+    }
+
+    // ── Clipping simulé des coins de la fenêtre ───────────────────────────────
+    // Repeindre les 4 coins extérieurs avec la couleur approximative du
+    // wallpaper pour masquer les débordements (sidebar, etc.).
+    {
+        let wx  = 0.250_f32;
+        let wy  = 0.050_f32;
+        let ww  = 0.492_f32;
+        let wh  = 0.731_f32;
+        let r   = 0.012_f32;
+
+        // Couleurs du gradient wallpaper interpolées à chaque coin
+        let wall_t = Color::rgb(10, 51, 54);
+        let wall_b = Color::rgb(14, 70, 62);
+
+        // Coin haut-gauche : cx=wx, cy=wy+r  (sommet du coin haut-gauche)
+        clip_corner(surface, x(wx), y(wy), w(r), h(r), wall_t, true,  true);
+        // Coin haut-droit : cx=wx+ww, cy=wy
+        clip_corner(surface, x(wx + ww), y(wy), w(r), h(r), wall_t, false, true);
+        // Coin bas-gauche : cx=wx, cy=wy+wh
+        clip_corner(surface, x(wx), y(wy + wh), w(r), h(r), wall_b, true,  false);
+        // Coin bas-droit : cx=wx+ww, cy=wy+wh
+        clip_corner(surface, x(wx + ww), y(wy + wh), w(r), h(r), wall_b, false, false);
     }
 
     // ════════════════════════════════════════════════════════════════════════
@@ -1032,4 +1060,36 @@ fn draw_app_icon(
                                   d - 2 * inset, d - 2 * inset, tile);
         }
     }
+}
+
+/// Masque un coin arrondi de fenêtre en repeignant le triangle extérieur
+/// avec la couleur du fond (wallpaper).
+///
+/// `cx/cy` = sommet exact du coin de la fenêtre.
+/// `rw/rh` = rayon du coin en pixels.
+/// `left`  = ce coin est à gauche de la fenêtre.
+/// `top`   = ce coin est en haut de la fenêtre.
+fn clip_corner(
+    surface: &mut dyn RenderTarget,
+    cx: i32, cy: i32,
+    rw: u32, rh: u32,
+    color: Color,
+    left: bool, top: bool,
+) {
+    let rw = rw as i32;
+    let rh = rh as i32;
+
+    // Carré extérieur au coin de la fenêtre
+    let bx = if left { cx - rw } else { cx };
+    let by = if top  { cy - rh } else { cy };
+
+    // 1. Peindre le carré entier en couleur wallpaper
+    surface.fill_rect(bx, by, rw as u32, rh as u32, color);
+
+    // 2. Recouvrir avec l'ellipse du coin arrondi de la fenêtre (blanc)
+    //    L'ellipse fait 2r × 2r et est centrée sur le coin cx/cy
+    let ex = cx - rw;
+    let ey = cy - rh;
+    surface.fill_ellipse(ex, ey, (rw * 2) as u32, (rh * 2) as u32,
+                         Color::rgb(250, 249, 246));
 }
