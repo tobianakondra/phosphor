@@ -135,34 +135,54 @@ pub fn render_desktop<T: RenderTarget>(surface: &mut T, typeface: &Typeface) {
     // Square the bottom corners of the title bar (cover the rounding)
     rect(surface, 0.250, 0.113, 0.492, 0.012, panel_hdr);
 
-    // Navigation arrows ← and →  (left side of title bar)
-    // Small circle-ish buttons with chevron glyphs
-    let nav_y = 0.065_f32;
-    // ← button — dark, active
-    round(surface, 0.261, nav_y - 0.014, 0.020, 0.028, 0.014,
-          Color::rgba(30, 37, 35, 30));
-    draw_chevron_left(surface, x(0.261), y(nav_y - 0.014), w(0.020), h(0.028), ink);
-    // → button — lighter, inactive
-    round(surface, 0.284, nav_y - 0.014, 0.020, 0.028, 0.014,
-          Color::rgba(30, 37, 35, 15));
-    draw_chevron_right(surface, x(0.284), y(nav_y - 0.014), w(0.020), h(0.028), muted);
+    // Navigation arrows ← and → + breadcrumb + window controls
+    // Tous alignés sur le MÊME centre vertical de la titlebar.
+    //
+    // Titlebar: y=0.050..0.102  → centre = 0.076
+    // Bouton nav:  h=0.028 → top = 0.076 - 0.014 = 0.062
+    // Breadcrumb:  h=0.032 → top = 0.076 - 0.016 = 0.060
+    // Ctrl button: h=0.026 → top = 0.076 - 0.013 = 0.063
+    let tb_cy  = 0.076_f32;   // centre vertical titlebar
+    let btn_h  = 0.028_f32;   // hauteur bouton nav
+    let btn_y  = tb_cy - btn_h / 2.0;    // top bouton nav = 0.062
+    let btn_w  = 0.020_f32;   // largeur bouton nav
 
-    // Breadcrumb address bar (centred capsule, white bg)
-    round(surface, 0.312, 0.060, 0.342, 0.040, 0.010, Color::rgb(255, 255, 253));
-    label(surface, 0.319, 0.068, 0.016,
+    // ← bouton (fond légèrement teinté, chevron ink centré)
+    round(surface, 0.261, btn_y, btn_w, btn_h, btn_h / 2.0,
+          Color::rgba(30, 37, 35, 30));
+    draw_chevron_left(surface, x(0.261), y(btn_y), w(btn_w), h(btn_h), ink);
+
+    // → bouton (fond plus léger, chevron muted centré)
+    round(surface, 0.284, btn_y, btn_w, btn_h, btn_h / 2.0,
+          Color::rgba(30, 37, 35, 15));
+    draw_chevron_right(surface, x(0.284), y(btn_y), w(btn_w), h(btn_h), muted);
+
+    // Breadcrumb — même centre vertical, capsule blanche
+    let bc_h   = 0.032_f32;
+    let bc_y   = tb_cy - bc_h / 2.0;    // top = 0.060
+    round(surface, 0.312, bc_y, 0.342, bc_h, 0.010, Color::rgb(255, 255, 253));
+    // Texte centré verticalement dans la capsule
+    label(surface, 0.319, bc_y + (bc_h - 0.016) / 2.0 - 0.002, 0.016,
           "Accueil  \u{203a}  Documents  \u{203a}  Projets", muted);
 
-    // Window controls — right side: – □ ×
-    // Maquette: 3 circles, grey/grey/red, with symbols inside
+    // Boutons – □ × — même centre vertical, cercles
+    // Diamètre = 0.022 (légèrement plus petit que les nav)
+    let ctrl_d = 0.020_f32;   // diamètre
+    let ctrl_y = tb_cy - ctrl_d / 2.0;
     let ctrl_configs = [
-        (0.676_f32, Color::rgb(210, 207, 200), "\u{2212}"),   // –  minimise
-        (0.699,     Color::rgb(210, 207, 200), "\u{25A1}"),   // □  maximise
-        (0.722,     Color::rgb(220, 76, 60),   "\u{00D7}"),   // ×  close
+        (0.676_f32, Color::rgb(210, 207, 200), "\u{2212}"),
+        (0.699_f32, Color::rgb(210, 207, 200), "\u{25FB}"),  // □ petit
+        (0.722_f32, Color::rgb(220, 76,  60 ), "\u{00D7}"),
     ];
     for (bx, bg_color, symbol) in ctrl_configs {
-        ellipse(surface, bx, nav_y - 0.012, 0.016, 0.026, bg_color);
-        label(surface, bx + 0.002, nav_y - 0.009, 0.015, symbol,
-              if symbol == "\u{00D7}" { white } else { Color::rgb(80, 80, 75) });
+        // Fond circulaire centré
+        ellipse(surface, bx, ctrl_y, ctrl_d, ctrl_d, bg_color);
+        // Symbole centré dans le cercle
+        let sym_size = 0.012_f32;
+        let sym_x = bx + ctrl_d / 2.0 - sym_size * 0.3;
+        let sym_y = ctrl_y + ctrl_d / 2.0 - sym_size * 0.6;
+        label(surface, sym_x, sym_y, sym_size, symbol,
+              if symbol == "\u{00D7}" { white } else { Color::rgb(90, 88, 83) });
     }
 
     // ── Sidebar ──────────────────────────────────────────────────────────────
@@ -570,7 +590,7 @@ fn draw_trash_icon(
     surface.fill_round_rect(x + w / 3, y, (w / 3) as u32, (h / 7) as u32, 1, color);
 }
 
-/// Left-pointing chevron < centred in the given box.
+/// Left-pointing chevron < centré dans la boîte.
 fn draw_chevron_left(
     surface: &mut dyn RenderTarget,
     x: i32, y: i32, w: u32, h: u32,
@@ -580,9 +600,11 @@ fn draw_chevron_left(
     let h = h as i32;
     let cx = x + w / 2;
     let cy = y + h / 2;
-    let hs = h / 4;
-    surface.draw_line((cx + hs / 2, cy - hs), (cx - hs / 2, cy), 1, color);
-    surface.draw_line((cx - hs / 2, cy), (cx + hs / 2, cy + hs), 1, color);
+    // Bras à 35 % de la hauteur de la boîte, pointe décalée de 25 %
+    let arm = (h * 35 / 100).max(3);
+    let off = (w * 25 / 100).max(2);
+    surface.draw_line((cx + off, cy - arm), (cx - off, cy), 1, color);
+    surface.draw_line((cx - off, cy), (cx + off, cy + arm), 1, color);
 }
 
 /// Right-pointing chevron > centred in the given box.
@@ -595,9 +617,10 @@ fn draw_chevron_right(
     let h = h as i32;
     let cx = x + w / 2;
     let cy = y + h / 2;
-    let hs = h / 4;
-    surface.draw_line((cx - hs / 2, cy - hs), (cx + hs / 2, cy), 1, color);
-    surface.draw_line((cx + hs / 2, cy), (cx - hs / 2, cy + hs), 1, color);
+    let arm = (h * 35 / 100).max(3);
+    let off = (w * 25 / 100).max(2);
+    surface.draw_line((cx - off, cy - arm), (cx + off, cy), 1, color);
+    surface.draw_line((cx + off, cy), (cx - off, cy + arm), 1, color);
 }
 
 /// Sparkle / assistant star icon (4-pointed star-ish shape).
