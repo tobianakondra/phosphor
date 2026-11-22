@@ -144,18 +144,14 @@ pub fn render_desktop<T: RenderTarget>(surface: &mut T, typeface: &Typeface) {
     // Ctrl button: h=0.026 → top = 0.076 - 0.013 = 0.063
     let tb_cy  = 0.076_f32;   // centre vertical titlebar
     let btn_h  = 0.028_f32;   // hauteur bouton nav
-    let btn_y  = tb_cy - btn_h / 2.0;    // top bouton nav = 0.062
-    let btn_w  = 0.020_f32;   // largeur bouton nav
+    let btn_y  = tb_cy - btn_h / 2.0;
+    let btn_w  = 0.016_f32;   // plus petits, plus discrets
 
-    // ← bouton (fond légèrement teinté, chevron ink centré)
-    round(surface, 0.261, btn_y, btn_w, btn_h, btn_h / 2.0,
-          Color::rgba(30, 37, 35, 30));
+    // ← bouton — pas de fond, juste le chevron ink
     draw_chevron_left(surface, x(0.261), y(btn_y), w(btn_w), h(btn_h), ink);
 
-    // → bouton (fond plus léger, chevron muted centré)
-    round(surface, 0.284, btn_y, btn_w, btn_h, btn_h / 2.0,
-          Color::rgba(30, 37, 35, 15));
-    draw_chevron_right(surface, x(0.284), y(btn_y), w(btn_w), h(btn_h), muted);
+    // → bouton — pas de fond, chevron muted
+    draw_chevron_right(surface, x(0.282), y(btn_y), w(btn_w), h(btn_h), muted);
 
     // Breadcrumb — même centre vertical, capsule blanche
     let bc_h   = 0.032_f32;
@@ -253,9 +249,8 @@ pub fn render_desktop<T: RenderTarget>(surface: &mut T, typeface: &Typeface) {
                   Color::rgb(230, 241, 236));
         }
 
-        // File type icon (small coloured square/round with inner glyph)
+        // File type icon — pas de fond, juste le glyphe coloré
         let ic = file_icon_colors[*icon_type];
-        round(surface, 0.398, ry - 0.001, 0.021, 0.032, 0.005, icon_bg);
         draw_file_icon(surface, x(0.398), y(ry - 0.001), w(0.021), h(0.032),
                        *icon_type, ic);
 
@@ -444,7 +439,7 @@ pub fn render_desktop<T: RenderTarget>(surface: &mut T, typeface: &Typeface) {
         let bx = lnch_x + pad + col * col_w;
         let by = rec_y0 + row * rec_dy;
 
-        round(surface, bx, by, ri_w, ri_h, 0.007, icon_bg);
+        // Icône sans fond
         draw_file_icon(surface, x(bx), y(by), w(ri_w), h(ri_h), *icon_type,
                        file_icon_colors[*icon_type]);
         label(surface, bx + ri_w + 0.009, by + 0.004, 0.015, name, ink);
