@@ -462,11 +462,9 @@ pub fn render_desktop<T: RenderTarget>(surface: &mut T, typeface: &Typeface) {
     draw_person(surface, x(av_x), y(foot_y), w(av_w), h(av_h), white);
     label(surface, av_x + av_w + 0.012, foot_y + 0.010, 0.018, "Mon compte", ink);
 
-    // Bouton power (bord droit, aligné verticalement avec avatar)
+    // Bouton power — pas de fond, juste l'icône
     let pw_x = lnch_x + lnch_w - pad - av_w;
-    ellipse(surface, pw_x, foot_y + 0.001, av_w, av_h - 0.002,
-            Color::rgb(220, 218, 213));
-    draw_power(surface, x(pw_x), y(foot_y + 0.001), w(av_w), h(av_h - 0.002), ink);
+    draw_power(surface, x(pw_x), y(foot_y + 0.001), w(av_w), h(av_h - 0.002), muted);
 
 
     let tb_y = 0.9194_f32;
